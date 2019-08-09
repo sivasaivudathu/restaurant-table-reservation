@@ -12,35 +12,26 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.project.restauranttablereservation.constants.RestaurantStatusType;
+import com.project.restauranttablereservation.constants.SlotStatusType;
 
 /**
  * @author sivasaiv
  *
  */
+
 @Entity
-@Table(name ="restaurant_status")
-public class RestaurantStatus {
+@Table(name = "slot_status")
+public class SlotStatus {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name ="rest_status_id")
 	private int id;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(unique = true)
-	private RestaurantStatusType status;
+	private SlotStatusType status;
 
-	public RestaurantStatus() {
-		
-	};
 	
-	public RestaurantStatus(int id, RestaurantStatusType status) {
-		super();
-		this.id = id;
-		this.status = status;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -49,15 +40,13 @@ public class RestaurantStatus {
 		this.id = id;
 	}
 
-	public RestaurantStatusType getStatus() {
+	public SlotStatusType getStatus() {
 		return status;
 	}
 
-	public void setStatus(RestaurantStatusType status) {
+	public void setStatus(SlotStatusType status) {
 		this.status = status;
 	}
 	
 	
-	
 }
-

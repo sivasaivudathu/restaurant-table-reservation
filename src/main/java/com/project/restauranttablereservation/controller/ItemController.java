@@ -11,13 +11,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.restauranttablereservation.constants.RestaurantStatusType;
 import com.project.restauranttablereservation.models.Item;
+import com.project.restauranttablereservation.models.RestaurantPhoneNumber;
+import com.project.restauranttablereservation.models.Restaurant;
+import com.project.restauranttablereservation.models.RestaurantBranch;
+import com.project.restauranttablereservation.repositories.RestaurantBranchRepository;
+import com.project.restauranttablereservation.repositories.RestaurantRepository;
+import com.project.restauranttablereservation.repositories.RestaurantStatusRepository;
 
 @RestController
 public class ItemController {
 
     @Autowired
     ItemController itemService;
+    
+    @Autowired
+	RestaurantStatusRepository repo;
+	
+	@Autowired
+	RestaurantBranchRepository branchrepo;
+	
+	@Autowired
+	RestaurantRepository restRepo;
 
     public static List<Item> items;
     static{
@@ -41,4 +57,29 @@ public class ItemController {
         return "Hello User!";
     }
 
+    @RequestMapping("/restaurant")
+    public void addrest() {
+    	 RestaurantBranch branch = new RestaurantBranch();
+		  
+		  branch.setAddress("Road No.1 , Banjara Hills"); branch.setCapacity(50);
+		  branch.setCity("Hyderabad"); branch.setClosesAt("11 pm");
+		  branch.setOpensAt("4 pm");
+		  
+		  branch.setStatus(repo.findByStatus(RestaurantStatusType.OPEN));
+		  
+		  RestaurantPhoneNumber ph = new RestaurantPhoneNumber(); 
+		  
+		  ph.setNumber("999999999");
+		  ph.setType("Cell");
+		 
+		  
+		 
+		  Restaurant restaurant = new Restaurant();
+		  restaurant.setName("RAGHAV");
+		  
+		  restRepo.save(restaurant);
+    }
+    
+    
+    
 }
