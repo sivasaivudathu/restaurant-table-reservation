@@ -25,6 +25,15 @@ public class SeatingType {
 	@Column(unique = true)
 	private String type;
 
+	public SeatingType() {
+		
+	}
+	
+	public SeatingType(String type) {
+		super();
+		this.type = type;
+	}
+
 	public int getId() {
 		return id;
 	}

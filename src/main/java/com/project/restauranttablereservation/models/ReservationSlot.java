@@ -33,9 +33,16 @@ public class ReservationSlot {
 	@JoinColumn(name ="status_id")
 	private SlotStatus status;
 	
-	@ManyToOne
-	@JoinColumn(name= "branch_id")
-	private RestaurantBranch branch;
+	public ReservationSlot() {
+		
+	}
+
+	
+	public ReservationSlot(String time, SlotStatus status) {
+		super();
+		this.time = time;
+		this.status = status;
+	}
 
 	public int getId() {
 		return id;
@@ -61,13 +68,6 @@ public class ReservationSlot {
 		this.status = status;
 	}
 
-	public RestaurantBranch getBranch() {
-		return branch;
-	}
-
-	public void setBranch(RestaurantBranch branch) {
-		this.branch = branch;
-	}
 	
 	
 }

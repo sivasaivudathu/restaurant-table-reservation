@@ -31,7 +31,15 @@ public class SlotStatus {
 	@Column(unique = true)
 	private SlotStatusType status;
 
+	public SlotStatus() {
+		
+	}
 	
+	public SlotStatus(SlotStatusType status) {
+		super();
+		this.status = status;
+	}
+
 	public int getId() {
 		return id;
 	}

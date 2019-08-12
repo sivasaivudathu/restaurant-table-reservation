@@ -1,4 +1,4 @@
-package com.project.restauranttablereservation.service;
+package com.project.restauranttablereservation.serviceImpl;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UsersRepository usersRepository;
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<User> optionalUser = usersRepository.findByFirstName(userName);
+        Optional<User> optionalUser = usersRepository.findByName(userName);
         return Optional.ofNullable(optionalUser).orElseThrow(()->new UsernameNotFoundException("Username Not Found"))
                .map(UserDetailsImpl::new).get();
     }

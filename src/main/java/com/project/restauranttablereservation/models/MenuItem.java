@@ -34,10 +34,6 @@ public class MenuItem {
 	@JoinColumn(name="item_category_id")
 	private MenuCategory category;
 	
-	@ManyToOne
-	@JoinColumn(name = "branch_id")
-	private RestaurantBranch branch;
-
 	public int getId() {
 		return id;
 	}
@@ -78,12 +74,4 @@ public class MenuItem {
 		this.category = category;
 	}
 
-	public RestaurantBranch getBranch() {
-		return branch;
-	}
-
-	public void setBranch(RestaurantBranch branch) {
-		this.branch = branch;
-	}
-	
 }

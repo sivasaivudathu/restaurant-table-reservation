@@ -25,6 +25,15 @@ public class PaymentType {
 	@Column(unique= true)
 	private String type;
 
+	public PaymentType() {
+		
+	}
+	
+	public PaymentType(String type) {
+		super();
+		this.type = type;
+	}
+
 	public int getId() {
 		return id;
 	}

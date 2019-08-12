@@ -64,18 +64,21 @@ public class ItemController {
 		  branch.setAddress("Road No.1 , Banjara Hills"); branch.setCapacity(50);
 		  branch.setCity("Hyderabad"); branch.setClosesAt("11 pm");
 		  branch.setOpensAt("4 pm");
-		  
+		  branch.setCapacity(50);
+		  branch.setClosesAt("11 pm");
 		  branch.setStatus(repo.findByStatus(RestaurantStatusType.OPEN));
 		  
 		  RestaurantPhoneNumber ph = new RestaurantPhoneNumber(); 
 		  
 		  ph.setNumber("999999999");
-		  ph.setType("Cell");
 		 
 		  
-		 
+		  branch.addNumber(ph);
+		  
 		  Restaurant restaurant = new Restaurant();
-		  restaurant.setName("RAGHAV");
+		  restaurant.setName("SAI");
+		  
+		  restaurant.addBranch(branch);
 		  
 		  restRepo.save(restaurant);
     }

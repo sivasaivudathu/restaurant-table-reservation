@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,14 +33,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
     	http.httpBasic().and().authorizeRequests()
-        .antMatchers("/hello").hasRole("USER")
-        .antMatchers("/getAllItems").hasRole("ADMIN")
+        
+    	.antMatchers("/admin/").hasRole("ADMIN")
+        .antMatchers("/user/").hasAnyRole("USER","ADMIN")
         .and()
         .csrf().disable();
     	
     }
 
-    private PasswordEncoder getPasswordEncoder() {
+	private PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

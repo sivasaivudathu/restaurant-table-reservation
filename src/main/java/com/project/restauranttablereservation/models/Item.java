@@ -1,8 +1,6 @@
 package com.project.restauranttablereservation.models;
 
-import java.io.Serializable;
-
-public class Item implements Serializable {
+public class Item  {
     private Integer id;
     private String name;
     private String category;

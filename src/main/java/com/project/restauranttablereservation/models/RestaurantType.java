@@ -25,6 +25,15 @@ public class RestaurantType {
 	@Column(unique =true)
 	private String type;
 
+	public RestaurantType() {
+		
+	}
+	
+	public RestaurantType(String type) {
+		super();
+		this.type = type;
+	}
+
 	public int getId() {
 		return id;
 	}

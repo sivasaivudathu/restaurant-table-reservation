@@ -11,7 +11,7 @@ import com.project.restauranttablereservation.models.User;
 
 @Transactional
 public interface UsersRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByFirstName(String firstname);
-    
+  
+	public Optional<User>  findByName(String name);
     
 }
