@@ -28,7 +28,6 @@ public class SlotStatus {
 	private int id;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(unique = true)
 	private SlotStatusType status;
 
 	public SlotStatus() {

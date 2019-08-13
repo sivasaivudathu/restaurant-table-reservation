@@ -3,8 +3,10 @@
  */
 package com.project.restauranttablereservation.models;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +31,7 @@ public class ReservationSlot {
 	@Column(name = "slot_time")
 	private String time;
 	
-	@ManyToOne(optional=false)
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER,optional=false)
 	@JoinColumn(name ="status_id")
 	private SlotStatus status;
 	

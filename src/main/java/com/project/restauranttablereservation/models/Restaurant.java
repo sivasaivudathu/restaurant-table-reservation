@@ -3,6 +3,7 @@
  */
 package com.project.restauranttablereservation.models;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +23,13 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
-public class Restaurant {
+public class Restaurant implements Serializable{
 	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +38,7 @@ public class Restaurant {
 	
 	private String name;
 	
-	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	@JoinColumn(name = "restaurant_id")
 	private Set<RestaurantBranch> branches;
 

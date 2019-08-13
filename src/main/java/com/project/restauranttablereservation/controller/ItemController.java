@@ -61,7 +61,8 @@ public class ItemController {
     public void addrest() {
     	 RestaurantBranch branch = new RestaurantBranch();
 		  
-		  branch.setAddress("Road No.1 , Banjara Hills"); branch.setCapacity(50);
+		  branch.setAddress("Road No.1 , Banjara Hills"); 
+		  branch.setCapacity(50);
 		  branch.setCity("Hyderabad"); branch.setClosesAt("11 pm");
 		  branch.setOpensAt("4 pm");
 		  branch.setCapacity(50);

@@ -46,39 +46,39 @@ public class RestaurantBranch {
 	@Column(name = "closes_at")
 	private String closesAt;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "rest_status_id")
 	private RestaurantStatus status;
 
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name="branch_admin",joinColumns = @JoinColumn(name = "branch_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> admins;
 	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name="branch_cuisine",joinColumns = @JoinColumn(name = "branch_id"), inverseJoinColumns = @JoinColumn(name = "cuisine_id",referencedColumnName = "id"))
 	private Set<Cuisine> cuisines;
 	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name="branch_type",joinColumns = @JoinColumn(name = "branch_id"), inverseJoinColumns = @JoinColumn(name = "type_id",referencedColumnName = "id"))
 	private Set<RestaurantType> types;
 	
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name="branch_payment_type",joinColumns = @JoinColumn(name = "branch_id"), inverseJoinColumns = @JoinColumn(name = "payment_type_id",referencedColumnName = "id"))
 	private Set<PaymentType> paymentTypes;
 
-	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name="branch_seating_type",joinColumns = @JoinColumn(name = "branch_id"), inverseJoinColumns = @JoinColumn(name = "seating_type_id",referencedColumnName = "id"))
     private Set<SeatingType> seatingTypes;
 	
-	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	@JoinColumn(name = "branch_id")
 	private Set<MenuItem> menuItems;
 	
-	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	@JoinColumn(name = "branch_id")
 	private Set<ReservationSlot> slots ;
 
-	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
 	@JoinColumn(name = "branch_id")
 	private Set<RestaurantPhoneNumber> phone;
 	

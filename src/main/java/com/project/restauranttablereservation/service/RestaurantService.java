@@ -3,18 +3,28 @@
  */
 package com.project.restauranttablereservation.service;
 
+import java.util.List;
+
+import com.project.restauranttablereservation.api.model.AddRestaurantRequest;
+import com.project.restauranttablereservation.api.model.AddRestaurantResponse;
+import com.project.restauranttablereservation.api.model.RestaurantBranchDetails;
+import com.project.restauranttablereservation.api.model.RestaurantResponse;
 import com.project.restauranttablereservation.models.BaseResponse;
-import com.project.restauranttablereservation.models.Restaurant;
-import com.project.restauranttablereservation.request.model.AddRestaurantBranchRequest;
 
 /**
  * @author sivasaiv
  *
  */
-public interface RestaurantService {
+public interface RestaurantService extends BaseService{
 
-	public BaseResponse addRestaurant(Restaurant restaurant);
+	public AddRestaurantResponse addRestaurant(AddRestaurantRequest request);
 	
-	public BaseResponse addRestaurantBranch(int restaurentId,AddRestaurantBranchRequest req);
+	public BaseResponse addRestaurantBranch(int restaurentId,RestaurantBranchDetails details);
+	
+	public AddRestaurantResponse getRestaurant(int id);
+	
+	public List<RestaurantResponse> getRestaurants();
+	
+	public List<RestaurantResponse> getRestaurants(String city);
 	
 }

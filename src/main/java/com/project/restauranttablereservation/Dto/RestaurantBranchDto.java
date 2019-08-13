@@ -1,21 +1,24 @@
 /**
  * 
  */
-package com.project.restauranttablereservation.request.model;
+package com.project.restauranttablereservation.Dto;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.project.restauranttablereservation.models.RestaurantBranch;
 
 /**
  * @author sivasaiv
  *
  */
-public class AddRestaurantBranchRequest {
+public class RestaurantBranchDto {
+
+	private int id;
 	
 	private String city;
 	
 	private String address;
-	
-	private int capacity;
 	
 	private String opensAt;
 	
@@ -25,15 +28,47 @@ public class AddRestaurantBranchRequest {
 	
 	private Set<String> cuisines;
 	
-	private Set<String> restauranttype;
+	private Set<String> restaurantType;
 	
 	private Set<String> paymentTypes;
 	
 	 private Set<String> seating;
 	 
-	 private Set<String> slots ;
-	 
 	 private Set<String> phone;
+	 
+	 public RestaurantBranchDto() {
+		 
+	 }
+	 
+	 public RestaurantBranchDto (RestaurantBranch branch) {
+		 this.id = branch.getId();
+		 this.city = branch.getCity();
+		 this.address = branch.getAddress();
+		 this.closesAt= branch.getClosesAt();
+		 this.opensAt= branch.getOpensAt();
+		 this.status = branch.getStatus().getStatus().name();
+		 this.cuisines = branch.getCuisines().stream().map(cuisine -> cuisine.getName()).collect(Collectors.toSet());
+		 this.paymentTypes = branch.getPaymentTypes().stream().map(paymentType -> paymentType.getType()).collect(Collectors.toSet());
+		 this.seating = branch.getSeatingTypes().stream().map(seatingType -> seatingType.getType()).collect(Collectors.toSet());
+		 this.restaurantType = branch.getTypes().stream().map(restType -> restType.getType()).collect(Collectors.toSet());
+		 this.phone = branch.getPhone().stream().map(phone -> phone.getNumber()).collect(Collectors.toSet());
+	 }
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Set<String> getRestaurantType() {
+		return restaurantType;
+	}
+
+	public void setRestaurantType(Set<String> restaurantType) {
+		this.restaurantType = restaurantType;
+	}
 
 	public String getCity() {
 		return city;
@@ -49,14 +84,6 @@ public class AddRestaurantBranchRequest {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public int getCapacity() {
-		return capacity;
-	}
-
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
 	}
 
 	public String getOpensAt() {
@@ -92,11 +119,11 @@ public class AddRestaurantBranchRequest {
 	}
 
 	public Set<String> getRestauranttype() {
-		return restauranttype;
+		return restaurantType;
 	}
 
 	public void setRestauranttype(Set<String> restauranttype) {
-		this.restauranttype = restauranttype;
+		this.restaurantType = restauranttype;
 	}
 
 	public Set<String> getPaymentTypes() {
@@ -115,13 +142,6 @@ public class AddRestaurantBranchRequest {
 		this.seating = seating;
 	}
 
-	public Set<String> getSlots() {
-		return slots;
-	}
-
-	public void setSlots(Set<String> slots) {
-		this.slots = slots;
-	}
 
 	public Set<String> getPhone() {
 		return phone;
@@ -130,6 +150,5 @@ public class AddRestaurantBranchRequest {
 	public void setPhone(Set<String> phone) {
 		this.phone = phone;
 	}
-	 
 	 
 }

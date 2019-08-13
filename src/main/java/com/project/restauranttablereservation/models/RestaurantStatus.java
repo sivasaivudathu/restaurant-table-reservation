@@ -35,9 +35,7 @@ public class RestaurantStatus {
 		
 	};
 	
-	public RestaurantStatus(int id, RestaurantStatusType status) {
-		super();
-		this.id = id;
+	public RestaurantStatus(RestaurantStatusType status) {
 		this.status = status;
 	}
 
