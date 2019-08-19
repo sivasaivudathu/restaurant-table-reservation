@@ -13,7 +13,8 @@ import com.project.restauranttablereservation.models.RestaurantBranch;
  * @author sivasaiv
  *
  */
-//@Transactional
+@Transactional
 public interface RestaurantBranchRepository extends JpaRepository<RestaurantBranch,Integer> {
 
+	public RestaurantBranch findByIdAndSeatingTypes_Type(int id ,String type);
 }

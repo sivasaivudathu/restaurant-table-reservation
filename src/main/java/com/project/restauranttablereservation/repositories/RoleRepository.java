@@ -9,5 +9,5 @@ import com.project.restauranttablereservation.models.Role;
 @Transactional
 public interface RoleRepository extends JpaRepository<Role, Integer>{
 
-    Role  findRoleByRoleName(String roleName);
+    public Role  findByRoleName(String roleName);
 }

@@ -37,4 +37,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse error = new ErrorResponse("Records Not Found", details);
         return new ResponseEntity(error, HttpStatus.NOT_FOUND);
     }
+    
+    @ExceptionHandler(InvalidInputException.class)
+    public final ResponseEntity<Object> handleInvalidInputException(InvalidInputException ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("Invalid Input", details);
+        return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+    }
 }

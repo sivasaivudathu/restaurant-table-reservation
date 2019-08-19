@@ -14,6 +14,7 @@ import com.project.restauranttablereservation.models.User;
 import com.project.restauranttablereservation.repositories.RoleRepository;
 import com.project.restauranttablereservation.repositories.UsersRepository;
 import com.project.restauranttablereservation.service.CustomerService;
+import com.project.restauranttablereservation.service.RoleService;
 
 /**
  * @author sivasaiv
@@ -26,7 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
 	UsersRepository userRepo;
 	
 	@Autowired
-	RoleRepository roleRepo;
+	RoleService roleService;
 	
 	@Override
 	public BaseResponse addUser(User user) {
@@ -42,9 +43,9 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 			String encryptedpass = new BCryptPasswordEncoder().encode(user.getPassword());
 			user.setPassword(encryptedpass);
-			user.addRole(roleRepo.findRoleByRoleName("USER"));
+			user.addRole(roleService.getRole("USER"));
 			user.setActive(true);
-			user =userRepo.save(user);
+			userRepo.save(user);
 			response.setStatus("SUCCESS");
 			response.setMessage("User created SucessFully");
 		

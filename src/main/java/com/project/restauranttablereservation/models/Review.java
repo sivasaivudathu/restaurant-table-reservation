@@ -3,6 +3,9 @@
  */
 package com.project.restauranttablereservation.models;
 
+import java.sql.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,12 +34,19 @@ public class Review {
 	private RestaurantBranch branch ;
 	
 	private String description;
+	
+	@Column(name ="review_date")
+	private Date date;
 
-	public Review(int id, User user, RestaurantBranch branch, String description) {
-		this.id = id;
+	public Review() {
+		
+	}
+	
+	public Review( User user, RestaurantBranch branch, String description,Date date) {
 		this.user = user;
 		this.branch = branch;
 		this.description = description;
+		this.date=date;
 	}
 
 	public int getId() {
@@ -69,6 +79,14 @@ public class Review {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 	
 }

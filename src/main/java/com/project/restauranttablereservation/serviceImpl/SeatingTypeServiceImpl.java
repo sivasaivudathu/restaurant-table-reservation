@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.restauranttablereservation.exceptions.RecordNotFoundException;
 import com.project.restauranttablereservation.models.SeatingType;
 import com.project.restauranttablereservation.repositories.SeatingTypeRepository;
 import com.project.restauranttablereservation.service.SeatingTypeService;
@@ -27,7 +28,7 @@ public class SeatingTypeServiceImpl implements SeatingTypeService {
 	SeatingTypeRepository seatingTypeRepo;
 	
 	@Override
-	public HashSet<SeatingType> getSeatingTypes(Set<String> seatingTypes) {
+	public Set<SeatingType> getSeatingTypes(Set<String> seatingTypes) {
 
 		HashSet<SeatingType> seatingTypeObjs = new HashSet<>();
 
@@ -44,5 +45,16 @@ public class SeatingTypeServiceImpl implements SeatingTypeService {
 
 		return seatingTypeObjs;
 	}
+
+	@Override
+	public SeatingType getSeatingType(String seatingType) {
+		Optional<SeatingType> optionalType = seatingTypeRepo.findByType(captalize(seatingType));
+		if(!optionalType.isPresent()) {
+			throw new RecordNotFoundException("Invalid Seating Type :"+seatingType);
+		}
+		return optionalType.get();
+	}
+	
+	
 
 }

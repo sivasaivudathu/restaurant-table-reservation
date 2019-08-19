@@ -5,17 +5,20 @@ package com.project.restauranttablereservation.api.model;
 
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author sivasaiv
  *
  */
+@Valid
 public class AddRestaurantRequest {
 
 	@NotNull
 	private String name;
 	
+	@NotNull
 	private Set<RestaurantBranchDetails> branches;
 
 	public String getName() {

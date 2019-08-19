@@ -22,11 +22,11 @@ public class Reservation {
 
 	@Id
 	@GeneratedValue(strategy =GenerationType.IDENTITY)
+	@Column(name = "reservation_id")
 	private int id ;
 	
 	@Column(name = "booked_at")
-	private Date booked_at;
-	
+	private Date bookedAt;
 	
 	private String name;
 	
@@ -71,12 +71,12 @@ public class Reservation {
 		this.id = id;
 	}
 
-	public Date getBooked_at() {
-		return booked_at;
+	public Date getBookedAt() {
+		return bookedAt;
 	}
 
-	public void setBooked_at(Date booked_at) {
-		this.booked_at = booked_at;
+	public void setBookedAt(Date bookedAt) {
+		this.bookedAt = bookedAt;
 	}
 
 	public String getName() {

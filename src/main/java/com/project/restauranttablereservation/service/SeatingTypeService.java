@@ -3,7 +3,6 @@
  */
 package com.project.restauranttablereservation.service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.project.restauranttablereservation.models.SeatingType;
@@ -14,5 +13,7 @@ import com.project.restauranttablereservation.models.SeatingType;
  */
 public interface SeatingTypeService {
 
-	public HashSet<SeatingType> getSeatingTypes(Set<String> seatingTypes);
+	public Set<SeatingType> getSeatingTypes(Set<String> seatingTypes);
+	
+	public SeatingType getSeatingType(String seatingType);
 }

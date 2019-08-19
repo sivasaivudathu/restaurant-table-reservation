@@ -14,4 +14,6 @@ import com.project.restauranttablereservation.models.ReservationSlot;
 public interface ReservationSlotService {
 
 	public Set<ReservationSlot> getReservationSlots(Set<String> slots);
+	
+	public ReservationSlot getBranchSlot(String time ,int branchId);
 }

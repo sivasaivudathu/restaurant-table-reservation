@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.project.restauranttablereservation.exceptions.RecordNotFoundException;
 import com.project.restauranttablereservation.models.User;
 import com.project.restauranttablereservation.models.UserDetailsImpl;
 import com.project.restauranttablereservation.repositories.UsersRepository;
@@ -17,10 +18,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UsersRepository usersRepository;
+   
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         Optional<User> optionalUser = usersRepository.findByName(userName);
         return Optional.ofNullable(optionalUser).orElseThrow(()->new UsernameNotFoundException("Username Not Found"))
                .map(UserDetailsImpl::new).get();
+    }
+    
+    public User getUserById(int userId) {
+    	
+    	Optional<User> optionalUser = usersRepository.findById(userId);
+    	if(!optionalUser.isPresent()) {
+    		throw new RecordNotFoundException("User not found with Id :"+userId);
+    	}
+    	
+    	return optionalUser.get();
     }
 }

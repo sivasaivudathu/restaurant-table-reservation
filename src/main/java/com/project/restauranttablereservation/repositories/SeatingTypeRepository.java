@@ -16,4 +16,5 @@ import com.project.restauranttablereservation.models.SeatingType;
 public interface SeatingTypeRepository extends JpaRepository<SeatingType, Integer>{
 
 	public Optional<SeatingType> findByType(String type);
+	
 }

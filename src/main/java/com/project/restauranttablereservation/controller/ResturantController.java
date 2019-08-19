@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.restauranttablereservation.api.model.AddRestaurantBranchRequest;
 import com.project.restauranttablereservation.api.model.AddRestaurantRequest;
-import com.project.restauranttablereservation.api.model.AddRestaurantResponse;
 import com.project.restauranttablereservation.api.model.RestaurantResponse;
+import com.project.restauranttablereservation.api.model.RestaurantSlotsResponse;
+import com.project.restauranttablereservation.dto.RestaurantDto;
 import com.project.restauranttablereservation.models.BaseResponse;
 import com.project.restauranttablereservation.service.RestaurantService;
 
@@ -31,7 +31,6 @@ import com.project.restauranttablereservation.service.RestaurantService;
  *
  */
 @RestController
-@RequestMapping("/admin")
 public class ResturantController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -41,32 +40,37 @@ public class ResturantController {
 	
 	@PostMapping(value="/restaurants")
 	@ResponseBody
-	public BaseResponse addRestaurant(@RequestBody @Valid AddRestaurantRequest request) {
-		logger.info("AdminController/addRestaurant...");
+	public RestaurantResponse addRestaurant(@RequestBody @Valid AddRestaurantRequest request) {
+		logger.info("ResturantController/addRestaurant...");
 		return restaurantService.addRestaurant(request);
 	}
 	
 	@PostMapping("/restaurants/{id}/branches")
 	@ResponseBody
 	public BaseResponse addRestaurantBranch(@PathVariable int id ,@RequestBody @Valid AddRestaurantBranchRequest request) {
-		logger.info("AdminController/addRestaurantBranch...");
+		logger.info("ResturantController/addRestaurantBranch...");
 		return restaurantService.addRestaurantBranch(id, request.getBranch());
 	}
 
 	
 	@GetMapping("/restaurants/{id}")
 	@ResponseBody
-	public AddRestaurantResponse getRestaurant(@PathVariable int id) {
-		logger.info("AdminController/getRestaurant...");
+	public RestaurantResponse getRestaurant(@PathVariable int id) {
+		logger.info("ResturantController/getRestaurant...");
 		return restaurantService.getRestaurant(id);
 	}
 	
 	@GetMapping("/restaurants")
 	@ResponseBody
-	public List<RestaurantResponse> getRestaurants(@RequestParam String city){
-		logger.info("AdminController/getRestaurants...");
+	public List<RestaurantDto> getRestaurants(@RequestParam(required =false) String city){
+		logger.info("ResturantController/getRestaurants...");
 		return restaurantService.getRestaurants(city);
 	}
 	
-	
+	@GetMapping("/restaurants/slots")
+	@ResponseBody
+	public RestaurantSlotsResponse getRestaurantSlots(@RequestParam  int branchId,@RequestParam String date) {
+		logger.info("ResturantController/getRestaurantSlots...");
+		return restaurantService.getRestaurantSlots(branchId, date);
+	}
 }

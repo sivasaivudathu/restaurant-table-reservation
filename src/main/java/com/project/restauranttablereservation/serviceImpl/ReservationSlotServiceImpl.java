@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.restauranttablereservation.constants.SlotStatusType;
 import com.project.restauranttablereservation.models.ReservationSlot;
+import com.project.restauranttablereservation.repositories.ReservationSlotRepository;
 import com.project.restauranttablereservation.service.ReservationSlotService;
 import com.project.restauranttablereservation.service.SlotStatusService;
 
@@ -24,6 +25,9 @@ public class ReservationSlotServiceImpl implements ReservationSlotService {
 	@Autowired
 	SlotStatusService slotStatusService;
 	
+	@Autowired
+	ReservationSlotRepository slotRepo;
+	
 	@Override
 	public Set<ReservationSlot> getReservationSlots(Set<String> slots) {
 
@@ -34,6 +38,12 @@ public class ReservationSlotServiceImpl implements ReservationSlotService {
 			reservationSlots.add(slot);
 		});
 		return reservationSlots;
+	}
+
+	@Override
+	public ReservationSlot getBranchSlot(String time, int branchId) {
+		
+		return slotRepo.findByTimeAndBranch_Id(time, branchId);
 	}
 
 }

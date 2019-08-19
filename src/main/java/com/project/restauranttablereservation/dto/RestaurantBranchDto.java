@@ -1,12 +1,17 @@
 /**
  * 
  */
-package com.project.restauranttablereservation.Dto;
+package com.project.restauranttablereservation.dto;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.project.restauranttablereservation.models.Cuisine;
+import com.project.restauranttablereservation.models.PaymentType;
 import com.project.restauranttablereservation.models.RestaurantBranch;
+import com.project.restauranttablereservation.models.RestaurantPhoneNumber;
+import com.project.restauranttablereservation.models.RestaurantType;
+import com.project.restauranttablereservation.models.SeatingType;
 
 /**
  * @author sivasaiv
@@ -14,8 +19,9 @@ import com.project.restauranttablereservation.models.RestaurantBranch;
  */
 public class RestaurantBranchDto {
 
-	private int id;
 	
+	private int id;
+
 	private String city;
 	
 	private String address;
@@ -47,11 +53,11 @@ public class RestaurantBranchDto {
 		 this.closesAt= branch.getClosesAt();
 		 this.opensAt= branch.getOpensAt();
 		 this.status = branch.getStatus().getStatus().name();
-		 this.cuisines = branch.getCuisines().stream().map(cuisine -> cuisine.getName()).collect(Collectors.toSet());
-		 this.paymentTypes = branch.getPaymentTypes().stream().map(paymentType -> paymentType.getType()).collect(Collectors.toSet());
-		 this.seating = branch.getSeatingTypes().stream().map(seatingType -> seatingType.getType()).collect(Collectors.toSet());
-		 this.restaurantType = branch.getTypes().stream().map(restType -> restType.getType()).collect(Collectors.toSet());
-		 this.phone = branch.getPhone().stream().map(phone -> phone.getNumber()).collect(Collectors.toSet());
+		 this.cuisines = branch.getCuisines().stream().map(Cuisine::getName).collect(Collectors.toSet());
+		 this.paymentTypes = branch.getPaymentTypes().stream().map(PaymentType::getType).collect(Collectors.toSet());
+		 this.seating = branch.getSeatingTypes().stream().map(SeatingType::getType).collect(Collectors.toSet());
+		 this.restaurantType = branch.getTypes().stream().map( RestaurantType::getType).collect(Collectors.toSet());
+		 this.phone = branch.getPhone().stream().map(RestaurantPhoneNumber::getNumber).collect(Collectors.toSet());
 	 }
 
 	public int getId() {
@@ -116,14 +122,6 @@ public class RestaurantBranchDto {
 
 	public void setCuisines(Set<String> cuisines) {
 		this.cuisines = cuisines;
-	}
-
-	public Set<String> getRestauranttype() {
-		return restaurantType;
-	}
-
-	public void setRestauranttype(Set<String> restauranttype) {
-		this.restaurantType = restauranttype;
 	}
 
 	public Set<String> getPaymentTypes() {

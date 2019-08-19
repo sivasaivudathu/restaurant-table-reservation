@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -34,6 +35,10 @@ public class ReservationSlot {
 	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER,optional=false)
 	@JoinColumn(name ="status_id")
 	private SlotStatus status;
+	
+	@ManyToOne
+	@JoinColumn(name = "branch_id")
+	private RestaurantBranch branch;
 	
 	public ReservationSlot() {
 		

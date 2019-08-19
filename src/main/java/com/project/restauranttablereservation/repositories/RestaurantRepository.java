@@ -21,4 +21,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
 	
 	List<Restaurant> findByBranches_City(String city);
 
+	Restaurant findByBranches_Id(int id);
 }

@@ -3,52 +3,31 @@
  */
 package com.project.restauranttablereservation.api.model;
 
-import java.util.Set;
-
-import com.project.restauranttablereservation.Dto.RestaurantBranchDto;
+import com.project.restauranttablereservation.dto.RestaurantDto;
+import com.project.restauranttablereservation.models.BaseResponse;
 
 /**
  * @author sivasaiv
  *
  */
-public class RestaurantResponse {
+public class RestaurantResponse extends BaseResponse{
 
-private String  name;
-	
-	private int id;
-	
-	private Set<RestaurantBranchDto> branches;
+    RestaurantDto restaurant;
 
-	public RestaurantResponse() {
-		
-	}
-	public RestaurantResponse(String name, int id, Set<RestaurantBranchDto> branches) {
-		this.name = name;
-		this.id = id;
-		this.branches = branches;
+    public RestaurantResponse() {
+    	
+    }
+    
+	public RestaurantResponse(RestaurantDto restaurant) {
+		super();
+		this.restaurant = restaurant;
 	}
 
-	public String getName() {
-		return name;
+	public RestaurantDto getRestaurant() {
+		return restaurant;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Set<RestaurantBranchDto> getBranches() {
-		return branches;
-	}
-
-	public void setBranches(Set<RestaurantBranchDto> branches) {
-		this.branches = branches;
+	public void setRestaurant(RestaurantDto restaurant) {
+		this.restaurant = restaurant;
 	}
 }
