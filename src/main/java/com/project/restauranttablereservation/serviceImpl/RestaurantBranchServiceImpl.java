@@ -4,6 +4,7 @@
 package com.project.restauranttablereservation.serviceImpl;
 import static com.project.restauranttablereservation.util.RestaurantUtils.captalize;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,6 +66,8 @@ public class RestaurantBranchServiceImpl implements RestaurantBranchService {
 	@Autowired
 	RoleService roleService;
 	
+	private static final  String RESTAURANT_ADMIN = "RESTAURANT_ADMIN";
+	
 	@Override
 	public RestaurantBranch generateBranch(RestaurantBranchDetails details) {
 		RestaurantBranch branch = new RestaurantBranch();
@@ -112,20 +115,24 @@ public class RestaurantBranchServiceImpl implements RestaurantBranchService {
 	@Override
 	public void addRestaurantBranchAdmin(AddBranchAdminRequest request, int branchId) {
 		
-		Optional<RestaurantBranch> optionalBranch = branchRepository.findById(branchId);
+		RestaurantBranch restaurantBranch = getBranchById(branchId);
 		
-		if(!optionalBranch.isPresent()) {
-			throw new RecordNotFoundException("Restaurant Branch doesn't exits with id :"+branchId);
-		}
-		Set<User> users = request.getUserid().stream().map(id ->{
-			     User user=  userDetailsService.getUserById(id);
-			     user.addRole(roleService.getRole("RESTAURANT_ADMIN"));
+		Set<User> users = addRoleToUsers(request.getUserid(),RESTAURANT_ADMIN);
+		restaurantBranch.addAdminUsers(users);
+		
+		branchRepository.save(restaurantBranch);
+	}
+
+	private Set<User> addRoleToUsers(List<Integer> userids,String roleName) {
+		return userids.stream().map(id ->{
+			     User user=  getUser(id);
+			     user.addRole(roleService.getRole(roleName));
 			     return user;
 			     }).collect(Collectors.toSet());
-		
-		RestaurantBranch branch = optionalBranch.get();
-		branch.addAdminUsers(users);
-		branchRepository.save(branch);
+	}
+
+	private User getUser(Integer id) {
+		return userDetailsService.getUserById(id);
 	}
 
 	@Override

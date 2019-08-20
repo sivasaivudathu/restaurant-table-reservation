@@ -40,7 +40,7 @@ public class ResturantController {
 	
 	@PostMapping(value="/restaurants")
 	@ResponseBody
-	public RestaurantResponse addRestaurant(@RequestBody @Valid AddRestaurantRequest request) {
+	public RestaurantResponse addRestaurant(@Valid @RequestBody  AddRestaurantRequest request) {
 		logger.info("ResturantController/addRestaurant...");
 		return restaurantService.addRestaurant(request);
 	}
@@ -67,9 +67,9 @@ public class ResturantController {
 		return restaurantService.getRestaurants(city);
 	}
 	
-	@GetMapping("/restaurants/slots")
+	@GetMapping("/restaurant/{branchId}/slots")
 	@ResponseBody
-	public RestaurantSlotsResponse getRestaurantSlots(@RequestParam  int branchId,@RequestParam String date) {
+	public RestaurantSlotsResponse getRestaurantSlots(@PathVariable  int branchId,@RequestParam String date) {
 		logger.info("ResturantController/getRestaurantSlots...");
 		return restaurantService.getRestaurantSlots(branchId, date);
 	}

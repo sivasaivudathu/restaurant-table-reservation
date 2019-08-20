@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,7 +43,6 @@ import com.project.restauranttablereservation.service.ReservationSlotService;
 import com.project.restauranttablereservation.service.RestaurantBranchService;
 import com.project.restauranttablereservation.service.RestaurantService;
 
-
 /**
  * @author sivasaiv
  *
@@ -57,75 +57,113 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Autowired
 	RestaurantBranchService branchService;
-	
+
 	@Autowired
 	EntityToDtoConverter entityConverter;
-	
+
 	@Autowired
-	ReservationSlotService slotService; 
-	
+	ReservationSlotService slotService;
+
 	@Autowired
 	ReservationService reservationService;
 
 	@Override
-	public RestaurantResponse addRestaurant(@Valid AddRestaurantRequest request){
+	public RestaurantResponse addRestaurant(AddRestaurantRequest request) {
 		logger.info("RestaurantServiceImpl/addRestaurant...");
 		RestaurantResponse response = new RestaurantResponse();
-		Restaurant restaurantCheck = restaurantRepo.findByName(request.getName());
 
-		if (null != restaurantCheck) {
+		if (isRestaurantExits(request.getName())) {
 			response.setMessage("Restauarant Already Exits");
 			response.setStatus("FAILURE");
 			return response;
 		}
 
+		Restaurant restaurant = getRestaurantEntity(request);
+		restaurant = restaurantRepo.save(restaurant);
+
+		response.setRestaurant(getRestaurantDTO(restaurant));
+		response.setMessage("Restaurant Added SuccessFully");
+		response.setStatus("SUCCESS");
+
+		return response;
+	}
+
+	private RestaurantDto getRestaurantDTO(Restaurant restaurant) {
+		return entityConverter.convertRestaurantEntity(restaurant);
+	}
+
+	private Restaurant getRestaurantEntity(AddRestaurantRequest request) {
 		Restaurant restaurant = new Restaurant();
 		restaurant.setName(captalize(request.getName()));
 
 		for (RestaurantBranchDetails detail : request.getBranches()) {
-			RestaurantBranch branch = branchService.generateBranch(detail);
+			RestaurantBranch branch = getRestaurantBranchEntity(detail);
 			restaurant.addBranch(branch);
 		}
-			restaurant = restaurantRepo.save(restaurant);
-			response.setRestaurant(entityConverter.convertRestaurantEntity(restaurant));
-			response.setMessage("Restaurant Added SuccessFully");
-			response.setStatus("SUCCESS");
-		
-		return response;
+		return restaurant;
+	}
+
+	private RestaurantBranch getRestaurantBranchEntity(RestaurantBranchDetails detail) {
+		return branchService.generateBranch(detail);
+	}
+
+	private boolean isRestaurantExits(String restaurantName) {
+		Restaurant restaurant = restaurantRepo.findByName(restaurantName);
+
+		return !isRestaurantNull(restaurant) ;
+	}
+
+	private boolean isRestaurantNull(Restaurant restaurant) {
+
+		return Objects.isNull(restaurant);
 	}
 
 	@Override
-	public BaseResponse addRestaurantBranch(int restaurentId, @Valid RestaurantBranchDetails req) {
+	public BaseResponse addRestaurantBranch(int restaurantId, RestaurantBranchDetails req) {
 		logger.info("RestaurantServiceImpl/addRestaurantBranch...");
 		BaseResponse response = new BaseResponse();
-		RestaurantBranch branch = branchService.generateBranch(req);
-			Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurentId);
 
-			if (optionalRestaurant.isPresent()) {
-				Restaurant restaurant = optionalRestaurant.get();
-				restaurant.addBranch(branch);
-				restaurantRepo.save(restaurant);
-				response.setStatus("SUCCESS");
-				response.setMessage("Branch Added Successfully");
-			} else {
-				throw new RecordNotFoundException("Invalid Restaurant Id :" +restaurentId);
-			}
-		
+		if (!isRestaurantExists(restaurantId)) {
+			throw new RecordNotFoundException("Invalid Restaurant Id :" + restaurantId);
+		}
+
+		Optional<Restaurant> optionalRestaurant = getRestaurantById(restaurantId);
+		Restaurant restaurant = optionalRestaurant.get();
+
+		RestaurantBranch branch = getRestaurantBranchEntity(req);
+
+		restaurant.addBranch(branch);
+		restaurantRepo.save(restaurant);
+
+		response.setStatus("SUCCESS");
+		response.setMessage("Branch Added Successfully");
+
 		return response;
+	}
+
+	private Optional<Restaurant> getRestaurantById(int restaurantId) {
+		return restaurantRepo.findById(restaurantId);
+	}
+
+	private boolean isRestaurantExists(int restaurantId) {
+
+		Optional<Restaurant> optionalRestaurant = getRestaurantById(restaurantId);
+
+		return optionalRestaurant.isPresent();
 	}
 
 	@Override
 	public RestaurantResponse getRestaurant(int restaurentId) {
 		logger.info("RestaurantServiceImpl/getRestaurant...");
 		RestaurantResponse response = new RestaurantResponse();
-		Optional<Restaurant> optionalRestaurant = restaurantRepo.findById(restaurentId);
+		Optional<Restaurant> optionalRestaurant = getRestaurantById(restaurentId);
 
 		if (optionalRestaurant.isPresent()) {
 			Restaurant restaurant = optionalRestaurant.get();
-			response.setRestaurant(entityConverter.convertRestaurantEntity(restaurant));
+			response.setRestaurant(getRestaurantDTO(restaurant));
 			response.setStatus("SUCCESS");
 		} else {
-			throw new RecordNotFoundException("Invalid Restaurant Id :" +restaurentId);
+			throw new RecordNotFoundException("Invalid Restaurant Id :" + restaurentId);
 		}
 		return response;
 	}
@@ -133,81 +171,99 @@ public class RestaurantServiceImpl implements RestaurantService {
 	@Override
 	public List<RestaurantDto> getRestaurants() {
 		logger.info("RestaurantServiceImpl/getRestaurants...");
-		List<RestaurantDto> restaurantsDto ;
-			List<Restaurant> restaurants = restaurantRepo.findAll();
-			if(restaurants.isEmpty()) {
-				throw new RecordNotFoundException("No Restaurants Found");
-			}
-			restaurantsDto= restaurants.stream().map(entityConverter::convertRestaurantEntity).collect(Collectors.toList());
-						
+		List<RestaurantDto> restaurantsDto;
+		List<Restaurant> restaurants = restaurantRepo.findAll();
+		if (restaurants.isEmpty()) {
+			throw new RecordNotFoundException("No Restaurants Found");
+		}
+		restaurantsDto = restaurants.stream().map(entityConverter::convertRestaurantEntity)
+				.collect(Collectors.toList());
+
 		return restaurantsDto;
 	}
 
 	@Override
 	public List<RestaurantDto> getRestaurants(String city) {
-		List<RestaurantDto> restaurantsDto ;
-		if(null == city) {
+		List<RestaurantDto> restaurantsDto;
+		if (null == city) {
 			return getRestaurants();
 		}
 		
-		List<Restaurant> restaurants =  restaurantRepo.findByBranches_City(city);
-		if(restaurants.isEmpty()) {
-			
-			restaurants = new ArrayList<>();
+		List<Restaurant> restaurants = restaurantRepo.findByBranches_City(city);
+		if (restaurants.isEmpty()) {
+			return new ArrayList<>();
 		}
-	
-		restaurants.stream().forEach(restaurant -> restaurant.setBranches(restaurant.getBranches().stream()
-												.filter(branch -> branch.getCity().equalsIgnoreCase(city)).collect(Collectors.toSet())));
-		
+
+		filterRestaurantsByCity(city, restaurants);
+
 		HashSet<Restaurant> restaurantSet = new HashSet<>(restaurants);
-		restaurantsDto=	restaurantSet.stream().map(entityConverter::convertRestaurantEntity).collect(Collectors.toList());
-		
-		
+		restaurantsDto = restaurantSet.stream().map(this::getRestaurantDTO).collect(Collectors.toList());
+
 		return restaurantsDto;
 	}
-	
-	public RestaurantSlotsResponse getRestaurantSlots(int branchId,String dateString) {
-		Date date;
-		try {
-		 date = Date.valueOf(dateString);
-		}catch(IllegalArgumentException ex) {
-			
-			throw new InvalidInputException( dateString +" not in yyyy-mm-dd Format");
+
+	private void filterRestaurantsByCity(String city, List<Restaurant> restaurants) {
+		restaurants.stream().forEach(restaurant -> restaurant.setBranches(restaurant.getBranches().stream()
+				.filter(branch -> branch.getCity().equalsIgnoreCase(city)).collect(Collectors.toSet())));
+	}
+
+	public RestaurantSlotsResponse getRestaurantSlots(int branchId, String dateString) {
+
+		if (isBranchIdNull(branchId)) {
+			throw new InvalidInputException("BranchId cannot be Null");
 		}
-		Restaurant restaurant = restaurantRepo.findByBranches_Id(branchId);
-		if(null == restaurant) {
-			throw new RecordNotFoundException("Invalid Branch Id : " +branchId );
-		}
-		Optional<RestaurantBranch>  optionalBranch = restaurant.getBranches().stream().filter(branch -> branchId==branch.getId()).findFirst();
-		RestaurantBranch branch ;
-		if(optionalBranch.isPresent()) {
-		branch = optionalBranch.get(); 
-		}else {
-			throw new RecordNotFoundException("Invalid Branch Id : " +branchId );
-		}
-		
-		int capacity = branch.getCapacity();
-		Set<ReservationSlot> slots = branch.getSlots();
+		RestaurantBranch branch = getRestaurantBranch(branchId);
+
+		Set<ReservationSlot> reservationSlots = branch.getSlots();
 		Set<ReservationSlotDto> responseSlots = new HashSet<>();
-		
-		for(ReservationSlot slot : slots) {
+		int capacity = branch.getCapacity();
+
+		for (ReservationSlot slot : reservationSlots) {
 			ReservationSlotDto slotDto = new ReservationSlotDto();
+			List<Reservation> reservations = getReservations(slot, getDatefromString(dateString));
+			setSlotAvailability(capacity, slotDto, reservations);
 			slotDto.setTime(slot.getTime());
-			List<Reservation> reservations = reservationService.getReservations(slot, date);
-			int totalGuests =0;
-			 totalGuests = reservations.stream().map(Reservation::getGuests).collect(Collectors.summingInt(Integer::intValue));
-			if(totalGuests < capacity) {
-				slotDto.setStatus(SlotStatusType.AVAILABLE);
-			}else {
-				slotDto.setStatus(SlotStatusType.NOT_AVAILABLE);
-			}
 			responseSlots.add(slotDto);
 		}
-		
+
 		HashMap<String, Set<ReservationSlotDto>> data = new HashMap<>();
 		data.put(dateString, responseSlots);
-		
-		return new RestaurantSlotsResponse(branch.getId(), restaurant.getName(), branch.getCity(), branch.getAddress(),data);
+
+		return new RestaurantSlotsResponse(branch.getId(), branch.getRestaurant().getName(), branch.getCity(),
+				branch.getAddress(), data);
 	}
-	
+
+	private void setSlotAvailability(int capacity, ReservationSlotDto slotDto, List<Reservation> reservations) {
+		int totalGuests = 0;
+		totalGuests = reservations.stream().map(Reservation::getGuests)
+				.collect(Collectors.summingInt(Integer::intValue));
+		if (totalGuests < capacity) {
+			slotDto.setStatus(SlotStatusType.AVAILABLE);
+		} else {
+			slotDto.setStatus(SlotStatusType.NOT_AVAILABLE);
+		}
+	}
+
+	private List<Reservation> getReservations(ReservationSlot slot, Date date) {
+		return reservationService.getReservations(slot, date);
+	}
+
+	private RestaurantBranch getRestaurantBranch(int branchId) {
+		return branchService.getBranchById(branchId);
+	}
+
+	private Date getDatefromString(String dateString) {
+		Date date;
+		try {
+			date = Date.valueOf(dateString);
+		} catch (IllegalArgumentException ex) {
+			throw new InvalidInputException(dateString + " not in yyyy-mm-dd Format");
+		}
+		return date;
+	}
+
+	private boolean isBranchIdNull(int branchId) {
+		return Objects.isNull(branchId);
+	}
+
 }

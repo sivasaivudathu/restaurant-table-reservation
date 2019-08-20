@@ -18,7 +18,10 @@ import com.project.restauranttablereservation.exceptions.InvalidInputException;
 import com.project.restauranttablereservation.models.BaseResponse;
 import com.project.restauranttablereservation.models.Reservation;
 import com.project.restauranttablereservation.models.ReservationSlot;
+import com.project.restauranttablereservation.models.ReservationStatus;
 import com.project.restauranttablereservation.models.RestaurantBranch;
+import com.project.restauranttablereservation.models.SeatingType;
+import com.project.restauranttablereservation.models.User;
 import com.project.restauranttablereservation.repositories.ReservationRepository;
 import com.project.restauranttablereservation.service.ReservationService;
 import com.project.restauranttablereservation.service.ReservationSlotService;
@@ -62,59 +65,81 @@ public class ReservationServiceImpl implements ReservationService {
 
 
 	@Override
-	public BaseResponse addReservation(ReservationRequest request) {
+	public BaseResponse addReservation(ReservationRequest reservationRequest) {
 		
+		Reservation reservation = getReservation(reservationRequest);
+		reservationRepo.save(reservation);
+		return new BaseResponse("Success", "Reservation placed Successfully");
+	}
+
+
+	private Reservation getReservation(ReservationRequest request) {
 		Reservation reservation = new Reservation();
-		Date date ;
 		reservation.setName(request.getName());
 		reservation.setGuests(request.getGuests());
 		reservation.setPhoneNumber(request.getPhoneNumber());
 		reservation.setSmokingPreference(request.getSmokingPreference());
-
 		long millis = System.currentTimeMillis();
 		reservation.setBookedAt(new Date(millis));
-		
-		reservation.setUser(userService.getUserById(request.getUserId()));
-		
-		RestaurantBranch branch = branchService.getBranchById(request.getBranchId());
-		
+		reservation.setUser(getUser(request.getUserId()));
+		RestaurantBranch branch = getRestaurantBranch(request.getBranchId());
 		reservation.setBranch(branch);
-		
-		ReservationSlot slot = slotService.getBranchSlot(request.getTime(), request.getBranchId());
-		
-		if(null == slot) {
-			 throw new InvalidInputException("Branch Doesn't Accept Bookings for :"+request.getTime());
-		}
+		ReservationSlot slot = getBranchSlot(request.getBranchId(),request.getTime());
 		reservation.setSlot(slot);
-		
-		try {
-			 date = Date.valueOf(request.getBookingDate());
-			}catch(IllegalArgumentException ex) {
-				throw new InvalidInputException( request.getBookingDate() +" not in yyyy-mm-dd Format");
-			}
-		
-		reservation.setBookingDate(date);
-		
-		reservation.setSeatingType(seatingTypeService.getSeatingType(request.getSeatingPreference()));
-		reservation.setStatus(statusService.getReservationStatus("PENDING"));
+		reservation.setBookingDate(getDatefromString(request.getBookingDate()));
+		reservation.setSeatingType(getSeatingType(request.getSeatingPreference()));
+		reservation.setStatus(getNewReservationStatus());
 		reservation.setComments("Booking");
-		reservationRepo.save(reservation);
-		
-		BaseResponse response = new BaseResponse();
-		
-		response.setMessage("Reservation placed Successfully");
-		response.setStatus("Success");
-		return response;
+		return reservation;
+	}
+
+
+	private ReservationStatus getNewReservationStatus() {
+		return statusService.getReservationStatus("PENDING");
+	}
+
+
+	private SeatingType getSeatingType(String seatingPreference) {
+		return seatingTypeService.getSeatingType(seatingPreference);
+	}
+
+
+	private Date getDatefromString(String dateString) {
+		Date date ;
+		try {
+			 date = Date.valueOf(dateString);;
+			}catch(IllegalArgumentException ex) {
+				throw new InvalidInputException( dateString +" not in yyyy-mm-dd Format");
+			}
+		return date;
+	}
+
+
+	private ReservationSlot getBranchSlot(int branchId,String slotTime) {
+		ReservationSlot slot = slotService.getBranchSlot(slotTime, branchId);
+		if(null == slot) {
+			 throw new InvalidInputException("Branch Doesn't Accept Bookings for :"+slotTime);
+		}
+		return slot;
+	}
+
+
+	private User getUser(int userId) {
+		return userService.getUserById(userId);
+	}
+
+
+	private RestaurantBranch getRestaurantBranch(int branchId) {
+		return branchService.getBranchById(branchId);
 	}
 	
 	public UserReservationsResponse getUserReservations(int userId) {
 		
-		
 		List<Reservation> reservations = reservationRepo.findByUser_Id(userId);
-		
 		List<ReservationDto> reservationsDto = reservations.stream().map(dtoConverter::convertReservationEntity).collect(Collectors.toList());
-		
 		return new UserReservationsResponse(reservationsDto);
 	}
+	
+	
 
 }
