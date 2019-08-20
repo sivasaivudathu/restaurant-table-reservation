@@ -22,5 +22,11 @@ public interface ReservationService {
 	
 	public BaseResponse addReservation(ReservationRequest request);
 	
-	public UserReservationsResponse getUserReservations(int userId);
+	public List<Reservation> getUserReservations(int userId);
+	
+	public List<Reservation> getBranchReservations(int branchId);
+	
+	public Reservation getReservationById(int reservationId);
+	
+	public void updateReservationStatus(int reservationId, String status) ;
 }

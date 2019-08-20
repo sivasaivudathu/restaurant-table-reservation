@@ -21,4 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 	List<Reservation> findBySlotAndBookingDate(ReservationSlot slot , Date date);
 	
 	List<Reservation> findByUser_Id(int id);
+	
+	List<Reservation> findByBranch_Id(int branchId);
 }

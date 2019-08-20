@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.project.restauranttablereservation.api.model.AddRestaurantRequest;
 import com.project.restauranttablereservation.api.model.RestaurantBranchDetails;
+import com.project.restauranttablereservation.api.model.RestaurantReservationsResponse;
 import com.project.restauranttablereservation.api.model.RestaurantResponse;
 import com.project.restauranttablereservation.api.model.RestaurantSlotsResponse;
 import com.project.restauranttablereservation.dto.RestaurantDto;
@@ -29,5 +30,9 @@ public interface RestaurantService extends BaseService{
 	public List<RestaurantDto> getRestaurants(String city);
 	
 	public RestaurantSlotsResponse getRestaurantSlots(int branchId,String dateString);
+	
+	public RestaurantReservationsResponse getBranchReservations(int branchId);
+	
+	public BaseResponse updateReservationStatus(int reservationId,String status);
 	
 }

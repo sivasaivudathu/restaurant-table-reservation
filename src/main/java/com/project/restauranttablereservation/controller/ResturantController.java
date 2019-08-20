@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.restauranttablereservation.api.model.AddRestaurantBranchRequest;
 import com.project.restauranttablereservation.api.model.AddRestaurantRequest;
+import com.project.restauranttablereservation.api.model.ReservationStatusUpdateRequest;
+import com.project.restauranttablereservation.api.model.RestaurantReservationsResponse;
 import com.project.restauranttablereservation.api.model.RestaurantResponse;
 import com.project.restauranttablereservation.api.model.RestaurantSlotsResponse;
 import com.project.restauranttablereservation.dto.RestaurantDto;
@@ -73,4 +76,18 @@ public class ResturantController {
 		logger.info("ResturantController/getRestaurantSlots...");
 		return restaurantService.getRestaurantSlots(branchId, date);
 	}
-}
+	
+	@GetMapping("/restaurant/{branchId}/reservations")
+	@ResponseBody
+	public RestaurantReservationsResponse getReservations(@PathVariable  int branchId,@RequestParam (required= false) String status,@RequestParam (required= false)String date) {
+		logger.info("ResturantController/getReservations...");
+		return restaurantService.getBranchReservations(branchId);
+	}
+	
+	@PutMapping("/restaurant/{branchId}/reservations/{reservationId}")
+	@ResponseBody
+	public BaseResponse updateReservationStatus(@PathVariable  int branchId,@PathVariable  int reservationId,@RequestBody ReservationStatusUpdateRequest updateRequest) {
+		
+		return restaurantService.updateReservationStatus(reservationId, updateRequest.getStatus());
+	}
+	}

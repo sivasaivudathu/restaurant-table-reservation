@@ -33,13 +33,4 @@ public class ReservationController {
 		return reservationService.addReservation(request);
 	}
 	
-	
-	  @GetMapping("/reservations")
-	  @ResponseBody 
-	  public UserReservationsResponse getReservations(@RequestParam int id) {
-		  return reservationService.getUserReservations(id);
-	  }
-	 
-	  
-	  
 }

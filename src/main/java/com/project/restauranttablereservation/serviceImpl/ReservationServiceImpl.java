@@ -5,6 +5,8 @@ package com.project.restauranttablereservation.serviceImpl;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.project.restauranttablereservation.api.model.UserReservationsResponse
 import com.project.restauranttablereservation.converters.EntityToDtoConverter;
 import com.project.restauranttablereservation.dto.ReservationDto;
 import com.project.restauranttablereservation.exceptions.InvalidInputException;
+import com.project.restauranttablereservation.exceptions.RecordNotFoundException;
 import com.project.restauranttablereservation.models.BaseResponse;
 import com.project.restauranttablereservation.models.Reservation;
 import com.project.restauranttablereservation.models.ReservationSlot;
@@ -133,13 +136,40 @@ public class ReservationServiceImpl implements ReservationService {
 		return branchService.getBranchById(branchId);
 	}
 	
-	public UserReservationsResponse getUserReservations(int userId) {
+	public List<Reservation> getUserReservations(int userId) {
 		
-		List<Reservation> reservations = reservationRepo.findByUser_Id(userId);
-		List<ReservationDto> reservationsDto = reservations.stream().map(dtoConverter::convertReservationEntity).collect(Collectors.toList());
-		return new UserReservationsResponse(reservationsDto);
+		return reservationRepo.findByUser_Id(userId);
 	}
 	
-	
+	public List<Reservation> getBranchReservations(int branchId){
+		
+		return reservationRepo.findByBranch_Id(branchId);
+	}
 
+	public Reservation getReservationById(int reservationId) {
+		
+		Optional<Reservation>  optionalReservation = reservationRepo.findById(reservationId);
+		if(!optionalReservation.isPresent()) {
+			throw new RecordNotFoundException("Reservation doesn't exists with id : "+ reservationId);
+		}
+		return optionalReservation.get();
+	}
+	
+	public void updateReservationStatus(int reservationId, String status) {
+
+		Reservation reservation = getReservationById(reservationId);
+		ReservationStatus reservationStatus = getReservationStatus(status);
+		reservation.setStatus(reservationStatus);
+		
+		reservationRepo.save(reservation);
+	}
+	
+private ReservationStatus getReservationStatus(String status) {
+		
+		ReservationStatus reservationStatus = statusService.getReservationStatus(status.toUpperCase());
+		if(Objects.isNull(reservationStatus)) {
+			throw new InvalidInputException("Invalid status : "+status);
+		}
+		return reservationStatus;
+	}
 }

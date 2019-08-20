@@ -3,6 +3,7 @@
  */
 package com.project.restauranttablereservation.service;
 
+import com.project.restauranttablereservation.api.model.UserReservationsResponse;
 import com.project.restauranttablereservation.models.BaseResponse;
 import com.project.restauranttablereservation.models.User;
 
@@ -13,4 +14,5 @@ import com.project.restauranttablereservation.models.User;
 public interface CustomerService {
 
 	public BaseResponse addUser(User user);
+	public UserReservationsResponse getReservations(int userId);
 }

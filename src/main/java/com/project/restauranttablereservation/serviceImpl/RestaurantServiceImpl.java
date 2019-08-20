@@ -15,8 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +22,26 @@ import org.springframework.stereotype.Service;
 
 import com.project.restauranttablereservation.api.model.AddRestaurantRequest;
 import com.project.restauranttablereservation.api.model.RestaurantBranchDetails;
+import com.project.restauranttablereservation.api.model.RestaurantReservationsResponse;
 import com.project.restauranttablereservation.api.model.RestaurantResponse;
 import com.project.restauranttablereservation.api.model.RestaurantSlotsResponse;
 import com.project.restauranttablereservation.constants.SlotStatusType;
 import com.project.restauranttablereservation.converters.EntityToDtoConverter;
 import com.project.restauranttablereservation.dto.ReservationSlotDto;
 import com.project.restauranttablereservation.dto.RestaurantDto;
+import com.project.restauranttablereservation.dto.RestaurantReservationDto;
 import com.project.restauranttablereservation.exceptions.InvalidInputException;
 import com.project.restauranttablereservation.exceptions.RecordNotFoundException;
 import com.project.restauranttablereservation.models.BaseResponse;
 import com.project.restauranttablereservation.models.Reservation;
 import com.project.restauranttablereservation.models.ReservationSlot;
+import com.project.restauranttablereservation.models.ReservationStatus;
 import com.project.restauranttablereservation.models.Restaurant;
 import com.project.restauranttablereservation.models.RestaurantBranch;
 import com.project.restauranttablereservation.repositories.RestaurantRepository;
 import com.project.restauranttablereservation.service.ReservationService;
 import com.project.restauranttablereservation.service.ReservationSlotService;
+import com.project.restauranttablereservation.service.ReservationStatusService;
 import com.project.restauranttablereservation.service.RestaurantBranchService;
 import com.project.restauranttablereservation.service.RestaurantService;
 
@@ -66,6 +68,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Autowired
 	ReservationService reservationService;
+	
+	@Autowired
+	ReservationStatusService statusService;
 
 	@Override
 	public RestaurantResponse addRestaurant(AddRestaurantRequest request) {
@@ -232,6 +237,25 @@ public class RestaurantServiceImpl implements RestaurantService {
 		return new RestaurantSlotsResponse(branch.getId(), branch.getRestaurant().getName(), branch.getCity(),
 				branch.getAddress(), data);
 	}
+	
+	@Override
+	public RestaurantReservationsResponse getBranchReservations(int branchId) {
+		
+		if(isBranchIdNull(branchId)) {
+			throw new InvalidInputException("BranchId cannot be Null");
+		}
+		
+		List<Reservation> reservations = getReservationsByBranchId(branchId);
+		List<RestaurantReservationDto> reservationsDto = reservations.stream().map(RestaurantReservationDto::new).collect(Collectors.toList());
+		return new RestaurantReservationsResponse(reservationsDto);
+	}
+	
+	public BaseResponse updateReservationStatus(int reservationId,String status) {
+		
+		reservationService.updateReservationStatus(reservationId, status);
+		
+		return new BaseResponse("SUCCESS", "Reservation Status Updated Successfully");
+	}
 
 	private void setSlotAvailability(int capacity, ReservationSlotDto slotDto, List<Reservation> reservations) {
 		int totalGuests = 0;
@@ -243,7 +267,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 			slotDto.setStatus(SlotStatusType.NOT_AVAILABLE);
 		}
 	}
-
+	
+	private List<Reservation> getReservationsByBranchId(int branchId){
+		return reservationService.getBranchReservations(branchId);
+	}
 	private List<Reservation> getReservations(ReservationSlot slot, Date date) {
 		return reservationService.getReservations(slot, date);
 	}
@@ -266,4 +293,5 @@ public class RestaurantServiceImpl implements RestaurantService {
 		return Objects.isNull(branchId);
 	}
 
+	
 }
